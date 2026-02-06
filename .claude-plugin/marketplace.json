@@ -1,0 +1,26 @@
+{
+  "name": "daichitomita-plugins",
+  "owner": {
+    "name": "tomitadaichi"
+  },
+  "metadata": {
+    "description": "Git workflow automation plugins for Claude Code"
+  },
+  "plugins": [
+    {
+      "name": "git-workflow",
+      "source": ".",
+      "description": "GitHub Flow automation with Conventional Commits. Claude automatically manages branches, commits, pushes, and PRs during development.",
+      "version": "1.0.0",
+      "author": {
+        "name": "tomitadaichi"
+      },
+      "homepage": "https://github.com/daichitomita/git-workflow",
+      "repository": "https://github.com/daichitomita/git-workflow",
+      "license": "MIT",
+      "keywords": ["git", "github", "workflow", "conventional-commits", "github-flow"],
+      "category": "development-workflow",
+      "tags": ["git", "github-flow", "conventional-commits", "automation", "pr"]
+    }
+  ]
+}
