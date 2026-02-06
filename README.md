@@ -21,16 +21,20 @@ You don't need to run any slash commands. Just ask Claude to implement a feature
 
 ## Installation
 
+### From this marketplace
+
+```bash
+# 1. マーケットプレイスを追加
+/plugin marketplace add daichitomita/git-workflow
+
+# 2. プラグインをインストール
+/plugin install git-workflow@daichitomita-plugins
+```
+
 ### Local testing
 
 ```bash
 claude --plugin-dir /path/to/git-workflow
-```
-
-### Via marketplace
-
-```bash
-claude plugin install git-workflow@<marketplace>
 ```
 
 ## Components
