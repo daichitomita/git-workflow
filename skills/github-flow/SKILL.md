@@ -5,7 +5,9 @@ description: >
   このワークフローを自動的に実行する: ブランチ状態の確認、フィーチャーブランチの作成、変更の実装、
   Conventional Commits でのコミット、リモートへのプッシュ、Pull Request の作成。
   ユーザーが実装・修正・追加・更新・リファクタリング・コード変更を依頼した場合に適用する。
+  「コードを書いて」「作って」「直して」「変えて」「機能追加して」「バグを直して」などの依頼にも適用する。
 user-invocable: false
+allowed-tools: Bash(git:*), Bash(gh:*)
 ---
 
 # GitHub Flow 開発ワークフロー
@@ -14,21 +16,15 @@ user-invocable: false
 
 ## Step 0: 作業前のブランチ確認（必須）
 
-コード変更を行う前に、必ず現在のブランチ状態を確認する:
+以下は現在の git 状態（スキル読み込み時に自動取得）:
 
-```bash
-git rev-parse --is-inside-work-tree 2>/dev/null
-```
+- **現在のブランチ**: !`git branch --show-current 2>/dev/null || echo '(git リポジトリではない)'`
+- **ステータス**: !`git status --short 2>/dev/null || echo '(git リポジトリではない)'`
+- **デフォルトブランチ**: !`git remote show origin 2>/dev/null | grep 'HEAD branch' | awk '{print $NF}' || echo 'main'`
 
 git リポジトリでない場合は、ワークフロー全体をスキップし、通常通り変更を実装する。
 
-git リポジトリの場合:
-
-```bash
-git fetch origin 2>/dev/null
-git branch --show-current
-git status
-```
+git リポジトリの場合、上記の状態から判断フローに進む。必要に応じて `git fetch origin` を実行する。
 
 ### 判断フロー
 
@@ -54,14 +50,6 @@ git checkout -b <type>/<kebab-case-description>
 1. 現在のブランチ名をユーザーに伝える
 2. 質問する: 「現在ブランチ `<branch-name>` にいます。このブランチで作業を続けますか？それとも新しいブランチを作成しますか？」
 3. ユーザーの回答を待ってから次に進む
-
-### デフォルトブランチの検出
-
-```bash
-git remote show origin 2>/dev/null | grep 'HEAD branch' | awk '{print $NF}'
-```
-
-フォールバック: `main` が存在するか確認し、次に `master` を確認する。
 
 ## Step 1: 変更の実装
 
@@ -114,12 +102,10 @@ git push -u origin $(git branch --show-current)
 
 `gh` CLI を使用して PR を作成する:
 
-1. リポジトリの PR テンプレートを確認する:
-```bash
-cat .github/pull_request_template.md 2>/dev/null || \
-cat .github/PULL_REQUEST_TEMPLATE.md 2>/dev/null || \
-echo ""
-```
+1. リポジトリの PR テンプレートを確認する（`Read` ツールで以下の順に探索する）:
+   - `.github/pull_request_template.md`
+   - `.github/PULL_REQUEST_TEMPLATE.md`
+   - `.github/PULL_REQUEST_TEMPLATE/pull_request_template.md`
 
 2. PR のタイトルと本文を生成する（pr-creation スキルを参照）
 
