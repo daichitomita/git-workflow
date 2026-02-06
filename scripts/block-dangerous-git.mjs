@@ -1,58 +1,58 @@
 #!/usr/bin/env node
 
 /**
- * PreToolUse hook: blocks dangerous git commands.
+ * PreToolUse フック: 危険な git コマンドをブロックする。
  *
- * Reads hook input JSON from stdin, checks the Bash command against
- * a list of dangerous patterns, and outputs a deny decision if matched.
+ * 標準入力からフック入力の JSON を読み取り、Bash コマンドを
+ * 危険なパターンのリストと照合し、一致した場合は拒否の判定を出力する。
  *
- * Blocked operations:
+ * ブロックされる操作:
  *   - git push --force / -f
  *   - git reset --hard
  *   - git checkout -- .
  *   - git restore .
  *   - git clean -f
  *   - git branch -D
- *   - Direct push to main/master
+ *   - main/master への直接プッシュ
  */
 
 const DANGEROUS_PATTERNS = [
   {
     pattern: /git\s+push\s+.*(-f\b|--force)/,
     reason:
-      "git push --force is blocked. Force pushing can destroy remote history. Use normal push instead.",
+      "git push --force はブロックされました。強制プッシュはリモート履歴を破壊する可能性があります。通常の push を使用してください。",
   },
   {
     pattern: /git\s+reset\s+--hard/,
     reason:
-      "git reset --hard is blocked. This irreversibly destroys local changes. Use git stash or git reset --soft instead.",
+      "git reset --hard はブロックされました。ローカルの変更が不可逆的に失われます。git stash または git reset --soft を使用してください。",
   },
   {
     pattern: /git\s+checkout\s+--\s*\./,
     reason:
-      "git checkout -- . is blocked. This irreversibly discards all uncommitted changes. Use git stash instead.",
+      "git checkout -- . はブロックされました。コミットされていない変更がすべて不可逆的に失われます。git stash を使用してください。",
   },
   {
     pattern: /git\s+restore\s+\.$|git\s+restore\s+--staged\s+--worktree\s+\./,
     reason:
-      "git restore . is blocked. This irreversibly discards all uncommitted changes. Use git stash instead.",
+      "git restore . はブロックされました。コミットされていない変更がすべて不可逆的に失われます。git stash を使用してください。",
   },
   {
     pattern: /git\s+clean\s+-[a-zA-Z]*f/,
-    reason: "git clean -f is blocked. This irreversibly deletes untracked files.",
+    reason: "git clean -f はブロックされました。未追跡ファイルが不可逆的に削除されます。",
   },
   {
     pattern: /git\s+branch\s+-D\b/,
     reason:
-      "git branch -D is blocked. Use git branch -d (lowercase) for safe branch deletion.",
+      "git branch -D はブロックされました。安全なブランチ削除には git branch -d（小文字）を使用してください。",
   },
 ];
 
 function checkDirectPushToMain(command) {
   if (/git\s+push\s+(origin\s+)?(main|master)\b/.test(command)) {
-    // Allow diff references like origin/main..HEAD
+    // origin/main..HEAD のような diff 参照を許可する
     if (!/origin\/(main|master)\.\./.test(command)) {
-      return "Direct push to main/master is blocked. Create a feature branch and use a Pull Request instead.";
+      return "main/master への直接プッシュはブロックされました。フィーチャーブランチを作成し、Pull Request を使用してください。";
     }
   }
   return null;
@@ -71,7 +71,7 @@ function deny(reason) {
 }
 
 async function main() {
-  // Read stdin
+  // 標準入力を読み取る
   const chunks = [];
   for await (const chunk of process.stdin) {
     chunks.push(chunk);
@@ -89,14 +89,14 @@ async function main() {
     process.exit(0);
   }
 
-  // Check each dangerous pattern
+  // 各危険パターンをチェック
   for (const { pattern, reason } of DANGEROUS_PATTERNS) {
     if (pattern.test(command)) {
       deny(reason);
     }
   }
 
-  // Check direct push to main/master
+  // main/master への直接プッシュをチェック
   const mainPushReason = checkDirectPushToMain(command);
   if (mainPushReason) {
     deny(mainPushReason);

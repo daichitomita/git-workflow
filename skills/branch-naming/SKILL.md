@@ -1,48 +1,48 @@
 ---
 name: branch-naming
 description: >
-  Branch naming conventions for GitHub Flow with Conventional Commits.
-  Use when creating branches or suggesting branch names.
-  Format: {type}/{kebab-case-description}. Supports Japanese to English translation.
+  GitHub Flow と Conventional Commits のためのブランチ命名規則。
+  ブランチ作成時やブランチ名の提案時に使用する。
+  フォーマット: {type}/{kebab-case-description}。日本語から英語への変換に対応。
 user-invocable: false
 ---
 
-# Branch Naming Conventions
+# ブランチ命名規則
 
-## Format
+## フォーマット
 
 ```
 {type}/{kebab-case-description}
 ```
 
-## Type Selection
+## タイプの選択
 
-Determine the type from the nature of the change:
+変更の性質からタイプを決定する:
 
-| Change Type | type | Example |
-|------------|------|--------|
-| New feature, endpoint, component, page | `feat` | `feat/add-user-auth` |
-| Bug fix, error correction | `fix` | `fix/resolve-login-error` |
-| Documentation only (.md files, comments) | `docs` | `docs/update-api-readme` |
-| Formatting, whitespace, no logic change | `style` | `style/format-config-files` |
-| Code restructuring, no behavior change | `refactor` | `refactor/extract-auth-service` |
-| Adding or fixing tests | `test` | `test/add-login-unit-tests` |
-| Build tools, deps, config, CI/CD | `chore` | `chore/upgrade-dependencies` |
-| Performance improvement | `perf` | `perf/optimize-query-execution` |
+| 変更内容 | type | 例 |
+|---------|------|-----|
+| 新機能、エンドポイント、コンポーネント、ページ | `feat` | `feat/add-user-auth` |
+| バグ修正、エラー修正 | `fix` | `fix/resolve-login-error` |
+| ドキュメントのみ（.md ファイル、コメント） | `docs` | `docs/update-api-readme` |
+| フォーマット、空白文字、ロジック変更なし | `style` | `style/format-config-files` |
+| コード構造の変更、動作変更なし | `refactor` | `refactor/extract-auth-service` |
+| テストの追加・修正 | `test` | `test/add-login-unit-tests` |
+| ビルドツール、依存関係、設定、CI/CD | `chore` | `chore/upgrade-dependencies` |
+| パフォーマンス改善 | `perf` | `perf/optimize-query-execution` |
 
-## Description Rules
+## 説明部分のルール
 
-- English, imperative form (add, fix, update, remove, implement)
-- kebab-case only, all lowercase
-- Maximum 30 characters for the description part
-- Be specific about what the branch does
+- 英語、命令形（add, fix, update, remove, implement）
+- kebab-case のみ、すべて小文字
+- 説明部分は最大30文字
+- ブランチの目的を具体的に記述する
 
-## Japanese to English Conversion
+## 日本語から英語への変換
 
-When the user provides a description in Japanese, translate it:
+ユーザーが日本語で説明を入力した場合は、英語に変換する:
 
-| Japanese Input | Branch Name |
-|---------------|------------|
+| 日本語入力 | ブランチ名 |
+|-----------|-----------|
 | ユーザー認証の追加 | `feat/add-user-auth` |
 | ログインのバグ修正 | `fix/resolve-login-bug` |
 | READMEの更新 | `docs/update-readme` |
@@ -51,11 +51,11 @@ When the user provides a description in Japanese, translate it:
 | 依存パッケージの更新 | `chore/update-dependencies` |
 | コードのリファクタリング | `refactor/restructure-code` |
 
-## Anti-Patterns
+## アンチパターン
 
-- No emoji in branch names
-- No uppercase letters
-- No spaces or underscores (use hyphens)
-- No branch names like `main`, `master`, `develop`
-- No generic names like `feat/update`, `fix/bug` (be specific)
-- No issue numbers only like `feat/123` (include a description)
+- ブランチ名に絵文字を使用しない
+- 大文字を使用しない
+- スペースやアンダースコアを使用しない（ハイフンを使う）
+- `main`、`master`、`develop` のような名前を使用しない
+- `feat/update`、`fix/bug` のような汎用的な名前を使用しない（具体的に記述する）
+- `feat/123` のように Issue 番号だけを使用しない（説明を含める）
