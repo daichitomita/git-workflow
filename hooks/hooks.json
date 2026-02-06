@@ -1,5 +1,5 @@
 {
-  "description": "Git workflow automation hooks: safety guards and workflow completion enforcement",
+  "description": "Git ワークフロー自動化フック: セーフティガードとワークフロー完了チェック",
   "hooks": {
     "PreToolUse": [
       {

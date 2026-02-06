@@ -1,90 +1,90 @@
 ---
 name: commit-convention
 description: >
-  Conventional Commits message format for git commits.
-  Use when committing changes. Analyzes diffs to automatically determine
-  the commit type, scope, and description.
+  git コミット用の Conventional Commits メッセージフォーマット。
+  変更をコミットする際に使用する。diff を分析してコミットの
+  タイプ、スコープ、説明を自動的に決定する。
 user-invocable: false
 ---
 
-# Conventional Commits Format
+# Conventional Commits フォーマット
 
-## Message Format
+## メッセージフォーマット
 
 ```
 <type>(<scope>): <description>
 ```
 
-Or without scope:
+スコープなしの場合:
 
 ```
 <type>: <description>
 ```
 
-## Type Determination from Diff
+## diff からのタイプ決定
 
-Analyze `git diff --staged` to determine the type:
+`git diff --staged` を分析してタイプを決定する:
 
-| Diff Pattern | type |
-|-------------|------|
-| New files with functional code | `feat` |
-| New functions, classes, endpoints, components | `feat` |
-| Fixing conditionals, error handling, edge cases | `fix` |
-| Only .md or documentation file changes | `docs` |
-| Only whitespace, formatting, semicolons | `style` |
-| Restructuring code without changing behavior | `refactor` |
-| Test file additions or modifications (*test*, *spec*) | `test` |
-| package.json, Makefile, config, Dockerfile changes | `chore` |
-| Algorithm optimization, caching, query tuning | `perf` |
-| .github/workflows/, CI config changes | `ci` |
-| Reverting a previous commit | `revert` |
+| diff のパターン | type |
+|----------------|------|
+| 機能的なコードを含む新規ファイル | `feat` |
+| 新しい関数、クラス、エンドポイント、コンポーネント | `feat` |
+| 条件分岐、エラーハンドリング、エッジケースの修正 | `fix` |
+| .md またはドキュメントファイルのみの変更 | `docs` |
+| 空白文字、フォーマット、セミコロンのみの変更 | `style` |
+| 動作を変えないコード構造の変更 | `refactor` |
+| テストファイルの追加・修正（*test*, *spec*） | `test` |
+| package.json、Makefile、設定ファイル、Dockerfile の変更 | `chore` |
+| アルゴリズムの最適化、キャッシュ、クエリチューニング | `perf` |
+| .github/workflows/、CI 設定ファイルの変更 | `ci` |
+| 以前のコミットのリバート | `revert` |
 
-When multiple types apply, use the primary purpose of the change.
+複数のタイプが該当する場合は、変更の主目的に合ったタイプを使用する。
 
-## Scope Determination
+## スコープの決定
 
-1. Changes concentrated in one directory/module → use that name
-   - `src/auth/` → scope: `auth`
-   - `components/Button/` → scope: `button`
-   - `api/users/` → scope: `users`
-2. Changes span multiple unrelated areas → omit scope
-3. Keep scope names short: `auth`, `api`, `ui`, `db`, `config`
+1. 変更が1つのディレクトリ/モジュールに集中している場合 → その名前を使用する
+   - `src/auth/` → スコープ: `auth`
+   - `components/Button/` → スコープ: `button`
+   - `api/users/` → スコープ: `users`
+2. 変更が複数の無関係な領域にまたがる場合 → スコープを省略する
+3. スコープ名は短くする: `auth`, `api`, `ui`, `db`, `config`
 
-## Description Rules
+## 説明のルール
 
-- English imperative form: add, fix, update, remove, implement, refactor
-- Start with lowercase
-- No period at the end
-- No emoji
-- Maximum 50 characters (ideally 30-40)
-- Describe what the change does, not what was done
+- 英語の命令形: add, fix, update, remove, implement, refactor
+- 小文字で始める
+- 末尾にピリオドをつけない
+- 絵文字を使用しない
+- 最大50文字（理想は30〜40文字）
+- 変更が何をするかを記述する（何をしたかではない）
 
-Good:
+良い例:
 - `feat(auth): add JWT token validation`
 - `fix: resolve null pointer in user lookup`
 - `docs: update API endpoint documentation`
 
-Bad:
-- `feat: updated the code` (past tense, vague)
-- `fix: Fixed bug` (past tense, capitalized, vague)
-- `feat: :sparkles: add feature` (emoji)
+悪い例:
+- `feat: updated the code`（過去形、曖昧）
+- `fix: Fixed bug`（過去形、大文字始まり、曖昧）
+- `feat: :sparkles: add feature`（絵文字）
 
-## Commit Splitting Criteria
+## コミット分割の基準
 
-Split into multiple commits when:
-- Changes include both a bug fix AND a new feature
-- Changes span unrelated functional areas
-- More than 10 files are changed for different reasons
-- Test changes are mixed with implementation changes
+以下の場合は複数のコミットに分割する:
+- バグ修正と新機能の両方が含まれている
+- 無関係な機能領域にまたがる変更がある
+- 異なる理由で10以上のファイルが変更されている
+- テストの変更と実装の変更が混在している
 
-How to split:
-1. `git reset HEAD` to unstage all
-2. `git add <related-files>` for the first logical group
+分割の手順:
+1. `git reset HEAD` ですべてのステージングを解除
+2. `git add <related-files>` で最初の論理グループをステージング
 3. `git commit -m "<type>(<scope>): <description>"`
-4. Repeat for each logical group
+4. 各論理グループに対して繰り返す
 
-## Important
+## 重要事項
 
-- Never add a `Co-Authored-By` header -- Claude Code adds this automatically
-- One commit = one logical change
-- Prefer smaller, focused commits over large multi-purpose ones
+- `Co-Authored-By` ヘッダーは絶対に追加しない -- Claude Code が自動的に付与する
+- 1コミット = 1つの論理的な変更
+- 大きな多目的コミットよりも、小さく焦点を絞ったコミットを優先する

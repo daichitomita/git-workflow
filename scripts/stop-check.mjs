@@ -1,20 +1,20 @@
 #!/usr/bin/env node
 
 /**
- * Stop hook: checks if the git workflow is complete before allowing Claude to stop.
+ * Stop フック: Claude が停止する前に git ワークフローが完了しているか確認する。
  *
- * Checks (in order):
- *   1. Is stop_hook_active true? → allow stop (prevent infinite loop)
- *   2. Is this a git repository?
- *   3. Are we on a feature branch? (skip on main/master)
- *   4. Are there uncommitted changes?
- *   5. Are there untracked files?
- *   6. Are there unpushed commits?
- *   7. Is there an open PR for this branch?
+ * チェック内容（順序通り）:
+ *   1. stop_hook_active が true か？ → 停止を許可（無限ループ防止）
+ *   2. git リポジトリか？
+ *   3. フィーチャーブランチ上か？（main/master ではスキップ）
+ *   4. コミットされていない変更があるか？
+ *   5. 未追跡ファイルがあるか？
+ *   6. プッシュされていないコミットがあるか？
+ *   7. このブランチにオープンな PR があるか？
  *
- * Exit codes:
- *   0 = allow stop
- *   2 = block stop (stderr message is shown to Claude)
+ * 終了コード:
+ *   0 = 停止を許可
+ *   2 = 停止をブロック（stderr のメッセージが Claude に表示される）
  */
 
 import { execSync } from "node:child_process";
@@ -33,7 +33,7 @@ function blockStop(message) {
 }
 
 async function main() {
-  // Read stdin
+  // 標準入力を読み取る
   const chunks = [];
   for await (const chunk of process.stdin) {
     chunks.push(chunk);
@@ -46,78 +46,78 @@ async function main() {
     process.exit(0);
   }
 
-  // Prevent infinite loop: if stop hook is already active, allow stop
+  // 無限ループ防止: stop フックが既にアクティブな場合は停止を許可
   if (input?.stop_hook_active === true) {
     process.exit(0);
   }
 
-  // Not a git repo? Allow stop
+  // git リポジトリでない場合は停止を許可
   if (run("git rev-parse --is-inside-work-tree") === null) {
     process.exit(0);
   }
 
   const branch = run("git rev-parse --abbrev-ref HEAD");
 
-  // On main/master or detached HEAD? Allow stop
+  // main/master 上またはデタッチド HEAD の場合は停止を許可
   if (!branch || ["main", "master", "HEAD"].includes(branch)) {
     process.exit(0);
   }
 
-  // Check for uncommitted changes (staged or unstaged)
+  // コミットされていない変更をチェック（ステージ済み・未ステージ）
   const hasStagedChanges = run("git diff --cached --quiet") === null;
   const hasUnstagedChanges = run("git diff --quiet") === null;
 
   if (hasStagedChanges || hasUnstagedChanges) {
     blockStop(
-      `There are uncommitted changes on branch '${branch}'. ` +
-        `Please commit your changes using Conventional Commits format before finishing.`
+      `ブランチ '${branch}' にコミットされていない変更があります。` +
+        `完了前に Conventional Commits フォーマットで変更をコミットしてください。`
     );
   }
 
-  // Check for untracked files
+  // 未追跡ファイルをチェック
   const untracked = run("git ls-files --others --exclude-standard");
   if (untracked) {
     blockStop(
-      `There are untracked files on branch '${branch}'. ` +
-        `Please stage and commit them, or add them to .gitignore, before finishing.`
+      `ブランチ '${branch}' に未追跡ファイルがあります。` +
+        `完了前にステージしてコミットするか、.gitignore に追加してください。`
     );
   }
 
-  // Check for unpushed commits
+  // プッシュされていないコミットをチェック
   const remoteBranchExists = run(`git rev-parse --verify origin/${branch}`) !== null;
 
   if (!remoteBranchExists) {
-    // Remote branch doesn't exist → definitely unpushed
+    // リモートブランチが存在しない → 確実にプッシュされていない
     const hasLocalCommits = run("git log --oneline -1");
     if (hasLocalCommits) {
       blockStop(
-        `Branch '${branch}' has not been pushed to origin. ` +
-          `Please push with 'git push -u origin ${branch}' and create a Pull Request.`
+        `ブランチ '${branch}' は origin にプッシュされていません。` +
+          `'git push -u origin ${branch}' でプッシュし、Pull Request を作成してください。`
       );
     }
   } else {
     const unpushed = run(`git log origin/${branch}..HEAD --oneline`);
     if (unpushed) {
       blockStop(
-        `There are unpushed commits on branch '${branch}'. ` +
-          `Please push and create a Pull Request.`
+        `ブランチ '${branch}' にプッシュされていないコミットがあります。` +
+          `プッシュして Pull Request を作成してください。`
       );
     }
   }
 
-  // Check if PR exists for this branch (only if gh CLI is available)
+  // このブランチに PR が存在するかチェック（gh CLI が利用可能な場合のみ）
   const ghAvailable = run("gh --version") !== null;
   if (ghAvailable) {
     const prUrl = run("gh pr view --json url -q '.url'");
     if (!prUrl) {
       blockStop(
-        `No Pull Request exists for branch '${branch}'. ` +
-          `Please create a PR with 'gh pr create'.`
+        `ブランチ '${branch}' の Pull Request が存在しません。` +
+          `'gh pr create' で PR を作成してください。`
       );
     }
   }
 
-  // All checks passed
+  // すべてのチェックに合格
   process.exit(0);
 }
 

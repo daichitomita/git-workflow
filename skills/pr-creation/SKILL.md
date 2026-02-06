@@ -1,53 +1,53 @@
 ---
 name: pr-creation
 description: >
-  Pull Request creation best practices using gh CLI.
-  Use when creating PRs on GitHub. Detects repository PR templates,
-  generates title and body from commit history, handles gh CLI setup.
+  gh CLI を使用した Pull Request 作成のベストプラクティス。
+  GitHub で PR を作成する際に使用する。リポジトリの PR テンプレートを検出し、
+  コミット履歴からタイトルと本文を生成し、gh CLI のセットアップを処理する。
 user-invocable: false
 ---
 
-# Pull Request Creation
+# Pull Request 作成
 
-## Prerequisites
+## 前提条件
 
-Before creating a PR, verify:
+PR を作成する前に以下を確認する:
 
-1. **gh CLI is available**:
+1. **gh CLI が利用可能であること**:
 ```bash
 gh --version
 ```
-If not installed, tell the user:
+インストールされていない場合、ユーザーに以下を伝える:
 ```
-gh CLI is required for PR creation. Install it:
+PR 作成には gh CLI が必要です。インストール方法:
   macOS:   brew install gh
-  Linux:   See https://github.com/cli/cli/blob/trunk/docs/install_linux.md
-Then authenticate: gh auth login
+  Linux:   https://github.com/cli/cli/blob/trunk/docs/install_linux.md を参照
+認証: gh auth login
 ```
 
-2. **Authentication**:
+2. **認証済みであること**:
 ```bash
 gh auth status
 ```
-If not authenticated: `gh auth login`
+未認証の場合: `gh auth login`
 
-3. **No existing PR for this branch**:
+3. **このブランチの PR が既に存在しないこと**:
 ```bash
 gh pr view --json url -q '.url' 2>/dev/null
 ```
-If a PR already exists, report its URL and skip creation.
+PR が既に存在する場合は、その URL を報告して作成をスキップする。
 
-## Detect Default Branch
+## デフォルトブランチの検出
 
 ```bash
 git remote show origin 2>/dev/null | grep 'HEAD branch' | awk '{print $NF}'
 ```
 
-Fallback: check for `main`, then `master`.
+フォールバック: `main` を確認し、次に `master` を確認する。
 
-## PR Template Detection
+## PR テンプレートの検出
 
-Check for repository PR templates in order:
+リポジトリの PR テンプレートを以下の順序で確認する:
 
 ```bash
 cat .github/pull_request_template.md 2>/dev/null || \
@@ -58,37 +58,37 @@ cat pull_request_template.md 2>/dev/null || \
 echo ""
 ```
 
-If a template is found, fill it in with the actual change information.
+テンプレートが見つかった場合は、実際の変更情報を記入する。
 
-## PR Title
+## PR タイトル
 
-- Use Conventional Commits format: `<type>(<scope>): <description>`
-- Maximum 70 characters
-- No emoji
-- If single commit: use that commit message as the title
-- If multiple commits: summarize the overall change
+- Conventional Commits フォーマットを使用する: `<type>(<scope>): <description>`
+- 最大70文字
+- 絵文字は使用しない
+- コミットが1つの場合: そのコミットメッセージをタイトルとして使用する
+- コミットが複数の場合: 全体の変更を要約する
 
-## PR Body (when no template)
+## PR 本文（テンプレートがない場合）
 
-Use this default structure:
+以下のデフォルト構造を使用する:
 
 ```markdown
-## Summary
-<!-- 1-3 sentences describing the overall change -->
+## 概要
+<!-- 全体の変更を1〜3文で説明 -->
 
-## Changes
-<!-- Bullet list of specific changes -->
+## 変更内容
+<!-- 具体的な変更のリスト -->
 -
 -
 
-## Test Plan
-<!-- How to verify the changes work -->
+## テスト計画
+<!-- 変更が正しく動作することの確認方法 -->
 -
 ```
 
-Fill in each section from `git log` and `git diff` analysis.
+各セクションを `git log` と `git diff` の分析から記入する。
 
-## Creating the PR
+## PR の作成
 
 ```bash
 gh pr create --title "<title>" --body "$(cat <<'EOF'
@@ -97,28 +97,28 @@ EOF
 )" --base <default-branch>
 ```
 
-Always use a HEREDOC for the body to handle multiline content and special characters.
+本文には必ず HEREDOC を使用して、複数行のコンテンツや特殊文字を処理する。
 
-## PR Size Guidelines
+## PR サイズガイドライン
 
-Check the change size:
+変更サイズを確認する:
 ```bash
 git diff origin/<default-branch>..HEAD --shortstat
 ```
 
-| Size | Lines Changed | Action |
-|------|--------------|--------|
-| Small | ~200 | Optimal, create PR |
-| Medium | 200-400 | Good, create PR |
-| Large | 400-800 | Warn user, suggest splitting in future |
-| XL | 800+ | Strongly warn, suggest splitting |
+| サイズ | 変更行数 | 対応 |
+|-------|---------|------|
+| Small | 〜200行 | 最適、PR を作成する |
+| Medium | 200〜400行 | 良好、PR を作成する |
+| Large | 400〜800行 | ユーザーに警告し、今後の分割を提案する |
+| XL | 800行以上 | 強く警告し、分割を提案する |
 
-Create the PR regardless of size, but include a note about size in large PRs.
+サイズに関わらず PR は作成するが、大きな PR にはサイズに関する注記を含める。
 
-## Error Handling
+## エラーハンドリング
 
-- **gh not installed**: Show installation instructions, skip PR creation
-- **Not authenticated**: Show `gh auth login`, skip PR creation
-- **PR already exists**: Report existing PR URL
-- **Push not done yet**: Push first, then create PR
-- **No commits**: Report "No changes to include in PR"
+- **gh 未インストール**: インストール手順を表示し、PR 作成をスキップする
+- **未認証**: `gh auth login` を案内し、PR 作成をスキップする
+- **PR が既に存在する**: 既存の PR URL を報告する
+- **プッシュ未完了**: まずプッシュしてから PR を作成する
+- **コミットなし**: 「PR に含める変更がありません」と報告する
