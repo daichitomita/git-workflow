@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## プロジェクト概要
 
-GitHub Flow と Conventional Commits を自動化する **Claude Code プラグイン**（バージョン 1.1.0）。
+GitHub Flow と Conventional Commits を自動化する **Claude Code プラグイン**（バージョン 1.1.1）。
 プラグインとしてインストールされると、Claude がコード変更時にブランチ作成 → 実装 → コミット → プッシュ → PR作成の一連のワークフローを自動実行する。
 
 ## アーキテクチャ
