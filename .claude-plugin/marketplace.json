@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "git-workflow",
-      "source": ".",
+      "source": "./",
       "description": "GitHub Flow automation with Conventional Commits. Claude automatically manages branches, commits, pushes, and PRs during development.",
       "version": "1.0.0",
       "author": {
