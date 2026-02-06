@@ -1,3 +1,5 @@
+[English](./README.en.md) | **日本語**
+
 # git-workflow
 
 GitHub Flow と Conventional Commits を自動化する Claude Code プラグイン。
