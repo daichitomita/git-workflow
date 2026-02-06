@@ -47,16 +47,18 @@ git remote show origin 2>/dev/null | grep 'HEAD branch' | awk '{print $NF}'
 
 ## PR テンプレートの検出
 
-リポジトリの PR テンプレートを以下の順序で確認する:
+`Glob` ツールでリポジトリの PR テンプレートを検索し、見つかったファイルを `Read` ツールで読み込む:
 
-```bash
-cat .github/pull_request_template.md 2>/dev/null || \
-cat .github/PULL_REQUEST_TEMPLATE.md 2>/dev/null || \
-cat .github/PULL_REQUEST_TEMPLATE/pull_request_template.md 2>/dev/null || \
-cat docs/pull_request_template.md 2>/dev/null || \
-cat pull_request_template.md 2>/dev/null || \
-echo ""
-```
+検索パターン:
+- `**/*pull_request_template*`
+- `**/*PULL_REQUEST_TEMPLATE*`
+
+よくある配置場所:
+1. `.github/pull_request_template.md`
+2. `.github/PULL_REQUEST_TEMPLATE.md`
+3. `.github/PULL_REQUEST_TEMPLATE/pull_request_template.md`
+4. `docs/pull_request_template.md`
+5. `pull_request_template.md`
 
 テンプレートが見つかった場合は、実際の変更情報を記入する。
 

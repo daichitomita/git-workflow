@@ -29,6 +29,8 @@ user-invocable: false
 | テストの追加・修正 | `test` | `test/add-login-unit-tests` |
 | ビルドツール、依存関係、設定、CI/CD | `chore` | `chore/upgrade-dependencies` |
 | パフォーマンス改善 | `perf` | `perf/optimize-query-execution` |
+| CI/CD パイプラインの変更 | `ci` | `ci/add-github-actions-workflow` |
+| 以前のコミットのリバート | `revert` | `revert/undo-login-refactor` |
 
 ## 説明部分のルール
 

@@ -78,7 +78,7 @@ user-invocable: false
 - テストの変更と実装の変更が混在している
 
 分割の手順:
-1. `git reset HEAD` ですべてのステージングを解除
+1. `git restore --staged .` ですべてのステージングを解除（作業ツリーの変更は保持される）
 2. `git add <related-files>` で最初の論理グループをステージング
 3. `git commit -m "<type>(<scope>): <description>"`
 4. 各論理グループに対して繰り返す
