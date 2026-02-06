@@ -1,27 +1,27 @@
 # git-workflow
 
-Claude Code plugin for automated GitHub Flow with Conventional Commits.
+GitHub Flow と Conventional Commits を自動化する Claude Code プラグイン。
 
-## What it does
+## 概要
 
-When this plugin is active, Claude automatically follows the GitHub Flow workflow during development:
+このプラグインを有効にすると、Claude が開発中に GitHub Flow ワークフローを自動的に実行します:
 
-1. **Branch check** -- Before any code change, checks the current branch state and creates a feature branch if needed
-2. **Implement** -- Makes the requested code changes
-3. **Commit** -- Creates commits using Conventional Commits format (`feat:`, `fix:`, etc.)
-4. **Push** -- Pushes the branch to origin
-5. **Create PR** -- Creates a Pull Request using `gh` CLI
+1. **ブランチ確認** -- コード変更前に現在のブランチ状態を確認し、必要に応じてフィーチャーブランチを作成
+2. **実装** -- 依頼されたコード変更を実行
+3. **コミット** -- Conventional Commits 形式（`feat:`, `fix:` 等）でコミットを作成
+4. **プッシュ** -- ブランチを origin にプッシュ
+5. **PR 作成** -- `gh` CLI を使って Pull Request を作成
 
-You don't need to run any slash commands. Just ask Claude to implement a feature or fix a bug, and it handles the entire git workflow automatically.
+スラッシュコマンドは不要です。機能の実装やバグ修正を依頼するだけで、Claude が git ワークフロー全体を自動的に処理します。
 
-## Requirements
+## 必要要件
 
-- [gh CLI](https://cli.github.com/) installed and authenticated (`gh auth login`)
-- Git repository with a remote configured
+- [gh CLI](https://cli.github.com/) がインストール・認証済み（`gh auth login`）
+- リモートが設定された Git リポジトリ
 
-## Installation
+## インストール
 
-### From this marketplace
+### マーケットプレイスから
 
 ```bash
 # 1. マーケットプレイスを追加
@@ -31,45 +31,47 @@ You don't need to run any slash commands. Just ask Claude to implement a feature
 /plugin install git-workflow@daichitomita-plugins
 ```
 
-### Local testing
+### ローカルテスト
 
 ```bash
 claude --plugin-dir /path/to/git-workflow
 ```
 
-## Components
+## コンポーネント
 
-### Skills (auto-invoked)
+### スキル（自動起動）
 
-| Skill | Purpose |
-|-------|--------|
-| `github-flow` | Core workflow orchestration -- teaches Claude the full branch/commit/push/PR flow |
-| `branch-naming` | Branch naming conventions: `{type}/{kebab-case-description}` |
-| `commit-convention` | Conventional Commits format: `<type>(<scope>): <description>` |
-| `pr-creation` | PR creation with `gh` CLI, template detection, title/body generation |
+| スキル | 役割 |
+|-------|------|
+| `github-flow` | ワークフロー全体の統括 -- ブランチ/コミット/プッシュ/PR の一連の流れを Claude に教える |
+| `branch-naming` | ブランチ命名規則: `{type}/{kebab-case-description}` |
+| `commit-convention` | Conventional Commits 形式: `<type>(<scope>): <description>` |
+| `pr-creation` | `gh` CLI による PR 作成、テンプレート検出、タイトル/本文の生成 |
 
-All skills are `user-invocable: false` -- Claude loads them automatically when relevant. No slash commands needed.
+すべてのスキルは `user-invocable: false` です。Claude が必要に応じて自動的に読み込むため、スラッシュコマンドは不要です。
 
-### Hooks
+### フック
 
-| Event | Purpose |
-|-------|--------|
-| `PreToolUse` (Bash) | Blocks dangerous git commands: `--force`, `reset --hard`, `clean -f`, direct push to main |
-| `Stop` | Prevents Claude from stopping with uncommitted changes, unpushed commits, or missing PR |
+| イベント | 役割 |
+|---------|------|
+| `PreToolUse` (Bash) | 危険な git コマンドをブロック: `--force`, `reset --hard`, `clean -f`, main への直接プッシュ |
+| `Stop` | 未コミットの変更、未プッシュのコミット、PR 未作成の状態で Claude が停止するのを防止 |
 
-### Safety Guards
+### セーフティガード
 
-The plugin blocks these dangerous operations:
+以下の危険な操作をブロックします:
+
 - `git push --force` / `git push -f`
 - `git reset --hard`
 - `git checkout -- .`
 - `git clean -f`
 - `git branch -D`
-- Direct push to `main` / `master`
+- `main` / `master` への直接プッシュ
 
-## Conventions
+## 規約
 
-### Branch Naming
+### ブランチ名
+
 ```
 feat/add-user-auth
 fix/resolve-login-bug
@@ -77,16 +79,18 @@ docs/update-readme
 chore/upgrade-dependencies
 ```
 
-### Commit Messages
+### コミットメッセージ
+
 ```
 feat(auth): add JWT token validation
 fix: resolve null pointer in user lookup
 docs: update API endpoint documentation
 ```
 
-### Supported Types
+### サポートするタイプ
+
 `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `perf`, `ci`, `revert`
 
-## License
+## ライセンス
 
 MIT
